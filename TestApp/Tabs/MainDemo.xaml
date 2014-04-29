@@ -1,0 +1,75 @@
+﻿<UserControl x:Class="TestApp.MainDemo"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:tree="clr-namespace:Aga.Controls.Tree;assembly=Aga.Controls">
+
+    <DockPanel VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling">
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+            <Button Click="Small_Click" Content="Small Model"/>
+            <Button Click="Big_Click" Content="Big Model"/>
+        </StackPanel>
+        <DockPanel>
+            <DockPanel DockPanel.Dock="Left">
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                    <TextBlock Text="TreeList" Margin="0,5,10,0"/>
+                    <Button Click="Toggle_Click" Content="Expand/Collapse"/>
+                    <Button Click="Add_Click" Content="Add Child"/>
+                    <Button Click="Remove_Click" Content="Remove"/>
+                </StackPanel>
+                <tree:TreeList Name="_treeList" DockPanel.Dock="Left" Width="300"
+						   ItemContainerStyle="{StaticResource TreeListItemNodeStyle}">
+                    <tree:TreeList.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <tree:RowExpander/>
+                                <Border Focusable="True" BorderThickness="{TemplateBinding Border.BorderThickness}" 
+								    Padding="{TemplateBinding Control.Padding}" 
+								    BorderBrush="{TemplateBinding Border.BorderBrush}" 
+								    Background="{TemplateBinding Panel.Background}" 
+								    Name="Bd" 
+								    SnapsToDevicePixels="True">
+                                    <TextBlock Text="{Binding Name}"></TextBlock>
+                                </Border>
+                            </StackPanel>
+                            <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType={x:Type tree:TreeListItem}}}" 
+									 Value="True">
+                                    <Setter Property="Background" TargetName="Bd">
+                                        <Setter.Value>
+                                            <DynamicResource ResourceKey="{x:Static SystemColors.HighlightBrushKey}" />
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter Property="TextElement.Foreground">
+                                        <Setter.Value>
+                                            <DynamicResource ResourceKey="{x:Static SystemColors.HighlightTextBrushKey}" />
+                                        </Setter.Value>
+                                    </Setter>
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
+                        </DataTemplate>
+                    </tree:TreeList.ItemTemplate>
+                </tree:TreeList>
+            </DockPanel>
+
+            <DockPanel DockPanel.Dock="Left">
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                    <TextBlock Text="TreeView" Margin="0,5,10,0"/>
+                </StackPanel>
+                <TreeView Name="_treeView">
+                    <TreeView.ItemContainerStyle>
+                        <Style TargetType="{x:Type TreeViewItem}">
+                            <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                            <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                        </Style>
+                    </TreeView.ItemContainerStyle>
+
+                    <TreeView.ItemTemplate>
+                        <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                            <TextBlock Text="{Binding Name}"/>
+                        </HierarchicalDataTemplate>
+                    </TreeView.ItemTemplate>
+                </TreeView>
+            </DockPanel>
+        </DockPanel>
+    </DockPanel>
+</UserControl>
