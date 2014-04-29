@@ -27,7 +27,7 @@ namespace UnitTests
 
 		private static TreeNode CreateTreeNode(int depth, int count)
 		{
-			TreeNode root = new TreeNode(null, null);
+			TreeNode root = new TreeNode(new TreeList(), null);
 			if (depth > 0)
 			{
 				for (int i = 0; i < count; i++)
