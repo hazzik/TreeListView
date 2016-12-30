@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,10 +20,22 @@ namespace TestApp
 	/// </summary>
 	public partial class RegistrySample : UserControl
 	{
-		public RegistrySample()
+        RegistryModel model;
+        public RegistrySample()
 		{
-			InitializeComponent();
-			_tree.Model = new RegistryModel();
+            model = new RegistryModel();
+            model.keys.Add(Registry.ClassesRoot);
+            InitializeComponent();
+			_tree.Model = this.model;
 		}
-	}
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            model.keys.Add(Registry.CurrentUser);
+            model.keys.Add(Registry.LocalMachine);
+            model.keys.Add(Registry.Users);
+            model.keys.Add(Registry.CurrentConfig);
+            _tree.Model = this.model;
+        }
+    }
 }

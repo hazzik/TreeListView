@@ -10,16 +10,13 @@ namespace TestApp
 {
 	class RegistryModel : ITreeModel
 	{
+        public List<RegistryKey> keys = new List<RegistryKey>();
 		public IEnumerable GetChildren(object parent)
 		{
 			var key = parent as RegistryKey;
 			if (parent == null)
 			{
-				yield return Registry.ClassesRoot;
-				yield return Registry.CurrentUser;
-				yield return Registry.LocalMachine;
-				yield return Registry.Users;
-				yield return Registry.CurrentConfig;
+                foreach (RegistryKey k in keys) yield return k;
 			}
 			else if (key != null)
 			{

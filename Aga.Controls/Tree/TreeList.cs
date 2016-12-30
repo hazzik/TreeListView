@@ -32,16 +32,20 @@ namespace Aga.Controls.Tree
 		public ITreeModel Model
 		{
 		  get { return _model; }
-		  set 
-		  {
-			  if (_model != value)
-			  {
-				  _model = value;
-				  _root.Children.Clear();
-				  Rows.Clear();
-				  CreateChildrenNodes(_root);
-			  }
-		  }
+		  set
+            {
+                if (_model != value)
+                {
+                    _model = value;
+                    _root.Children.Clear();
+                    Rows.Clear();
+                    CreateChildrenNodes(_root);
+                }
+                else//How to update?
+                {
+
+                }
+            }
 		}
 
 		private TreeNode _root;
