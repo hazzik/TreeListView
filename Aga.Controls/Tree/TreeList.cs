@@ -32,19 +32,77 @@ namespace Aga.Controls.Tree
 		public ITreeModel Model
 		{
 		  get { return _model; }
-		  set 
-		  {
-			  if (_model != value)
-			  {
-				  _model = value;
-				  _root.Children.Clear();
-				  Rows.Clear();
-				  CreateChildrenNodes(_root);
-			  }
-		  }
+		  set
+            {
+                if (_model != value)
+                {
+                    _model = value;
+                    _root.Children.Clear();
+                    Rows.Clear();
+                }
+                else//How to update?
+                {
+                    ClearRemovedNodes(_root);
+                    Rows.RefeshData();
+                }
+                CreateChildrenNodes(_root);
+            }
 		}
 
-		private TreeNode _root;
+        void ClearRemovedNodes(TreeNode node)
+        {
+            if (node != null && node.Children.Count > 0)
+            {
+                IEnumerable child = GetChildren(node);
+                if (IEnumerableIsNullOrEmpty(child))
+                {
+                    node.Children.Clear();
+                    return;
+                }
+
+                for (int i = 0; i < node.Children.Count; i++)
+                {
+                    bool flag = true;
+                    foreach (object obj in child)
+                    {
+                        if (node.Children[i].Tag == obj) { flag = false; break; }
+                    }
+
+                    if (flag)
+                    {
+                        ClearNodeAndChildInRows(node.Children[i]);
+                        node.Children.RemoveAt(i);
+                        i--;
+                    }
+                    else ClearRemovedNodes(node.Children[i]);
+                }
+            }
+        }
+
+        static bool IEnumerableIsNullOrEmpty(IEnumerable source)
+        {
+            if (source != null)
+            {
+                foreach (object obj in source)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        void ClearNodeAndChildInRows(TreeNode node)
+        {
+            if (node.HasChildren) for (int i = 0; i < node.Children.Count; i++)
+                {
+                    ClearNodeAndChildInRows(node.Children[i]);
+                }
+            Rows.Remove(node);
+        }
+
+
+
+
+        private TreeNode _root;
 		internal TreeNode Root
 		{
 			get { return _root; }
@@ -147,20 +205,34 @@ namespace Aga.Controls.Tree
 
 		internal void CreateChildrenNodes(TreeNode node)
 		{
-			var children = GetChildren(node);
-			if (children != null)
-			{
-				int rowIndex = Rows.IndexOf(node);
-				node.ChildrenSource = children as INotifyCollectionChanged;
-				foreach (object obj in children)
-				{
-					TreeNode child = new TreeNode(this, obj);
-					child.HasChildren = HasChildren(child);
-					node.Children.Add(child);
-				}
-				Rows.InsertRange(rowIndex + 1, node.Children.ToArray());
-			}
-		}
+            var childrens = GetChildren(node);
+            if (childrens != null)
+            {
+                int rowIndex = Rows.IndexOf(node);
+                node.ChildrenSource = childrens as INotifyCollectionChanged;
+                Collection<TreeNode> newnode = new Collection<TreeNode>();
+                foreach (object obj in childrens)
+                {
+                    TreeNode child = new TreeNode(this, obj);
+                    child.HasChildren = HasChildren(child);
+                    bool flag_new = true;
+                    foreach (TreeNode n in node.Children)
+                    {
+                        if (n.Tag == obj)
+                        {
+                            flag_new = false;
+                            break;
+                        }
+                    }
+                    if (flag_new)
+                    {
+                        node.Children.Add(child);
+                        newnode.Add(child);
+                    }
+                }
+                if (newnode.Count > 0) Rows.InsertRange(rowIndex + 1, newnode.ToArray());
+            }
+        }
 
 		private void CreateChildrenRows(TreeNode node)
 		{
