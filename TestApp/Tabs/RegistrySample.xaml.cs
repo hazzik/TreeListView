@@ -31,10 +31,13 @@ namespace TestApp
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            model.keys.Clear();
             model.keys.Add(Registry.CurrentUser);
             model.keys.Add(Registry.LocalMachine);
             model.keys.Add(Registry.Users);
             model.keys.Add(Registry.CurrentConfig);
+            _tree.Model = this.model;
+            model.keys.Clear();
             _tree.Model = this.model;
         }
     }

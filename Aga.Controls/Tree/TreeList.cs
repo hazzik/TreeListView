@@ -56,6 +56,7 @@ namespace Aga.Controls.Tree
                 IEnumerable child = GetChildren(node);
                 if (IEnumerableIsNullOrEmpty(child))
                 {
+                    ClearNodeAndChildInRows(node, false);
                     node.Children.Clear();
                     return;
                 }
@@ -90,13 +91,13 @@ namespace Aga.Controls.Tree
             }
             return true;
         }
-        void ClearNodeAndChildInRows(TreeNode node)
+        void ClearNodeAndChildInRows(TreeNode node,bool flag_RemoveParent = true)
         {
-            if (node.HasChildren) for (int i = 0; i < node.Children.Count; i++)
+            if (node.HasChildren | node.Children.Count > 0) for (int i = 0; i < node.Children.Count; i++)
                 {
                     ClearNodeAndChildInRows(node.Children[i]);
                 }
-            Rows.Remove(node);
+            if (flag_RemoveParent) Rows.Remove(node);
         }
 
 
